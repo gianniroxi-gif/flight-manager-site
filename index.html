@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlightManager — Logbook & Busta Paga per Piloti Malta Air</title>
+  <meta name="description" content="FlightManager: logbook EASA digitale e calcolo busta paga per piloti Malta Air Italy. Import automatico voli, PDF EASA FCL.050, IRPEF personalizzata." />
+  <meta property="og:title" content="FlightManager — Logbook & Busta Paga Malta Air" />
+  <meta property="og:description" content="L'app iOS per piloti Malta Air Italy. Logbook automatico, busta paga stimata, PDF EASA FCL.050." />
+  <meta property="og:image" content="https://flight-manager.it/preview.png" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0f1c;
+      --surface:  #111827;
+      --border:   #1e2d45;
+      --blue:     #3b82f6;
+      --blue-dim: rgba(59,130,246,0.12);
+      --green:    #22c55e;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --dim:      #475569;
+      --mono:     'Courier New', Courier, monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 32px;
+      background: rgba(10,15,28,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--blue); letter-spacing: 2px; }
+    .nav-cta {
+      background: var(--blue); color: #fff;
+      border: none; border-radius: 8px;
+      padding: 8px 20px; font-size: 13px; font-weight: 700;
+      cursor: pointer; text-decoration: none; letter-spacing: 0.5px;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59,130,246,0.15) 0%, transparent 70%);
+    }
+    .hero-badge {
+      display: inline-block;
+      font-family: var(--mono); font-size: 10px; letter-spacing: 3px;
+      color: var(--blue); border: 1px solid rgba(59,130,246,0.4);
+      padding: 5px 14px; border-radius: 20px; margin-bottom: 24px;
+      background: var(--blue-dim);
+    }
+    .hero h1 {
+      font-size: clamp(36px, 7vw, 72px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--blue); }
+    .hero-sub {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 40px;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--blue); color: #fff;
+      border-radius: 12px; padding: 14px 28px;
+      font-size: 16px; font-weight: 700; text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 24px rgba(59,130,246,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(59,130,246,0.45); }
+    .btn-primary svg { width: 22px; height: 22px; }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--muted);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 28px; font-size: 16px; font-weight: 600;
+      text-decoration: none; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--blue); color: var(--text); }
+
+    /* ── SCREENSHOTS ── */
+    .screenshots {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: nowrap;
+      overflow-x: auto; padding: 40px 24px;
+      scrollbar-width: none;
+    }
+    .screenshots::-webkit-scrollbar { display: none; }
+    .screenshots img {
+      height: 480px; width: auto; border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+    .screenshots img:hover { transform: scale(1.03); }
+
+    /* ── SECTIONS ── */
+    section { padding: 80px 24px; max-width: 960px; margin: 0 auto; }
+    .section-label {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 3px;
+      color: var(--blue); margin-bottom: 16px; display: block;
+    }
+    h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin-bottom: 16px; }
+    .section-intro { font-size: 17px; color: var(--muted); max-width: 600px; margin-bottom: 48px; }
+
+    /* ── FEATURES GRID ── */
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .feature-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover { border-color: rgba(59,130,246,0.4); transform: translateY(-3px); }
+    .feature-icon { font-size: 28px; margin-bottom: 14px; }
+    .feature-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .feature-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* ── HOW IT WORKS ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex; gap: 24px; align-items: flex-start;
+      padding: 28px 0; border-bottom: 1px solid var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: var(--mono); font-size: 28px; font-weight: 800;
+      color: var(--blue); opacity: 0.4; min-width: 48px; line-height: 1;
+    }
+    .step-content h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .step-content p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+    .step-content code {
+      font-family: var(--mono); font-size: 12px;
+      background: var(--blue-dim); color: var(--blue);
+      padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(59,130,246,0.2);
+    }
+
+    /* ── ROLES TABLE ── */
+    .roles-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13px; font-family: var(--mono);
+    }
+    .roles-table th {
+      text-align: left; padding: 10px 14px;
+      color: var(--blue); font-size: 10px; letter-spacing: 1px;
+      border-bottom: 1px solid var(--border);
+    }
+    .roles-table td {
+      padding: 10px 14px; color: var(--muted);
+      border-bottom: 1px solid rgba(30,45,69,0.5);
+    }
+    .roles-table tr:hover td { background: var(--blue-dim); color: var(--text); }
+    .badge {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 2px 8px; border-radius: 4px;
+      background: var(--blue-dim); color: var(--blue);
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+
+    /* ── CTA BOTTOM ── */
+    .cta-section {
+      text-align: center;
+      padding: 80px 24px;
+      background: radial-gradient(ellipse 70% 100% at 50% 100%, rgba(59,130,246,0.12) 0%, transparent 70%);
+    }
+    .cta-section h2 { font-size: clamp(28px, 4vw, 44px); margin-bottom: 16px; }
+    .cta-section p { color: var(--muted); font-size: 17px; margin-bottom: 40px; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--dim); font-size: 12px; font-family: var(--mono);
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+
+    /* ── DIVIDER ── */
+    .divider { height: 1px; background: var(--border); max-width: 960px; margin: 0 auto; }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .screenshots img { height: 360px; }
+      .step { flex-direction: column; gap: 8px; }
+      .step-num { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">✈ FLIGHTMANAGER</span>
+  <a href="#download" class="nav-cta">Scarica gratis</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="hero-badge">CLA MALTA AIR 2026–2031</span>
+  <h1>Il tuo logbook.<br><span>La tua busta paga.</span><br>Sempre con te.</h1>
+  <p class="hero-sub">
+    L'app iOS progettata per i piloti Malta Air Italy. Importa i voli in automatico, calcola il netto mensile e genera il PDF EASA FCL.050 — tutto in tempo reale.
+  </p>
+  <div class="hero-actions">
+    <a href="https://apps.apple.com/it/app/flightmanager/id6765693187" class="btn-primary" id="download">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      Scarica su App Store
+    </a>
+    <a href="#come-funziona" class="btn-secondary">Come funziona →</a>
+  </div>
+</section>
+
+<!-- SCREENSHOTS -->
+<div class="screenshots">
+  <img src="screens/voli.png" alt="Lista voli" loading="lazy" />
+  <img src="screens/logbook.png" alt="Logbook EASA" loading="lazy" />
+  <img src="screens/busta.png" alt="Busta paga" loading="lazy" />
+  <img src="screens/extra.png" alt="Extra mensili" loading="lazy" />
+  <img src="screens/config.png" alt="Config IRPEF" loading="lazy" />
+  <img src="screens/manuale.png" alt="Inserimento manuale" loading="lazy" />
+</div>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section>
+  <span class="section-label">FUNZIONALITÀ</span>
+  <h2>Tutto quello che ti serve,<br>niente di superfluo.</h2>
+  <p class="section-intro">Progettato da piloti per piloti. Zero burocrazia manuale.</p>
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">✈️</div>
+      <h3>Logbook automatico</h3>
+      <p>Forwarda le mail "Verified Flights" e i voli appaiono nel tuo logbook in tempo reale. Block time, ore notte, IFR, settori, TO/LDG calcolati automaticamente.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💶</div>
+      <h3>Busta paga stimata</h3>
+      <p>Calcola il netto mensile secondo il CLA Malta Air 2026–2031 per tutti i ruoli: SO, JFO, FO, SFI, CPT, LTC, LCC, TRE e varianti BTC. IRPEF progressiva con scaglioni 23/33/43%.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3>PDF EASA FCL.050</h3>
+      <p>Esporta il logbook in PDF conforme alla normativa EASA FCL.050, pronto per ispezioni e rinnovi di licenza.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Extra mensili</h3>
+      <p>Gestisci HSBY, training, ferie, congedo parentale, posizionamenti e night stops. Tutto confluisce automaticamente nel calcolo della busta.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧮</div>
+      <h3>IRPEF YTD personalizzata</h3>
+      <p>Calcolo progressivo dell'imposta con addizionali regionali e comunali personalizzate. Supporta tutte le 20 regioni italiane.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">☁️</div>
+      <h3>Sync in tempo reale</h3>
+      <p>I dati sono sincronizzati in cloud. Cambia dispositivo senza perdere nulla. Accesso sicuro tramite login con email aziendale Malta Air.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<section id="come-funziona">
+  <span class="section-label">COME INIZIARE</span>
+  <h2>Sei operativo<br>in 5 minuti.</h2>
+  <p class="section-intro">Segui questi passi e il tuo logbook si aggiorna da solo ogni volta che voli.</p>
+  <div class="steps">
+    <div class="step">
+      <span class="step-num">01</span>
+      <div class="step-content">
+        <h3>Scarica l'app e registrati</h3>
+        <p>Crea il tuo account con l'email personale. Inserisci i tuoi dati di profilo: qualifica CLA, nome pilota e la tua <strong>email aziendale Malta Air</strong> (es. <code>rossiG@ryrefb.com</code>).</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">02</span>
+      <div class="step-content">
+        <h3>Configura il forwarding delle mail</h3>
+        <p>Ogni volta che ricevi una mail "Verified Flights" da CrewLink, fai <strong>forward</strong> a <code>import@flight-manager.it</code>. I voli appariranno nel tuo logbook entro pochi minuti, completamente automatici.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">03</span>
+      <div class="step-content">
+        <h3>Importa il libretto pregresso</h3>
+        <p>Nel tab <strong>Config → Carry Forward</strong> inserisci le ore e i movimenti del tuo vecchio libretto cartaceo. Si fa una volta sola e confluisce nei totali del logbook digitale.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">04</span>
+      <div class="step-content">
+        <h3>Configura la tua busta paga</h3>
+        <p>Nel tab <strong>Config → IRPEF</strong> seleziona la tua regione e inserisci le addizionali dalla busta precedente. Dal mese 2 in poi copia i progressivi dalla busta Malta Air.</p>
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num">05</span>
+      <div class="step-content">
+        <h3>Gestisci gli extra ogni mese</h3>
+        <p>Nel tab <strong>Extra</strong> inserisci HSBY, ferie, congedo parentale, posizionamenti e night stops del mese. Il calcolo della busta paga si aggiorna in tempo reale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ROLES -->
+<section>
+  <span class="section-label">RUOLI SUPPORTATI</span>
+  <h2>Tabelle CLA 2026–2031<br>per ogni qualifica.</h2>
+  <p class="section-intro">L'app applica automaticamente i parametri retributivi corretti in base alla tua qualifica.</p>
+  <div style="overflow-x:auto; border:1px solid var(--border); border-radius:12px;">
+    <table class="roles-table">
+      <thead>
+        <tr>
+          <th>QUALIFICA</th>
+          <th>RUOLO</th>
+          <th>BASICO/MESE</th>
+          <th>GMFA/MESE</th>
+          <th>HFA RATE</th>
+          <th>FERIE/GG</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="badge">SO</span></td><td>Second Officer</td><td>€ 384,62</td><td>€ 2.226,67</td><td>€ 18,40/h</td><td>€ 73,70</td></tr>
+        <tr><td><span class="badge">JFO</span></td><td>Junior First Officer</td><td>€ 692,31</td><td>€ 3.000,08</td><td>€ 18,82/h</td><td>€ 132,00</td></tr>
+        <tr><td><span class="badge">FO</span></td><td>First Officer</td><td>€ 775,00</td><td>€ 3.358,58</td><td>€ 20,98/h</td><td>€ 132,00</td></tr>
+        <tr><td><span class="badge">SFI</span></td><td>Sr. F/O Istruttore</td><td>€ 775,00</td><td>€ 3.358,58</td><td>€ 20,98/h</td><td>€ 132,00</td></tr>
+        <tr><td><span class="badge">CPT</span></td><td>Comandante</td><td>€ 1.650,00</td><td>€ 7.150,00</td><td>€ 47,05/h</td><td>€ 188,20</td></tr>
+        <tr><td><span class="badge">LTC</span></td><td>Line Training Captain</td><td>€ 1.650,00</td><td>€ 7.150,00</td><td>€ 47,05/h</td><td>€ 188,20</td></tr>
+        <tr><td><span class="badge">LCC</span></td><td>Line Check Captain</td><td>€ 1.650,00</td><td>€ 7.150,00</td><td>€ 47,05/h</td><td>€ 188,20</td></tr>
+        <tr><td><span class="badge">TRE</span></td><td>Type Rating Examiner</td><td>€ 1.650,00</td><td>€ 7.150,00</td><td>€ 47,05/h</td><td>€ 188,20</td></tr>
+        <tr><td><span class="badge">TRE_BTC</span></td><td>TRE Base Training</td><td>€ 1.650,00</td><td>€ 8.150,00</td><td>€ 47,05/h</td><td>€ 188,20</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:11px; color:var(--dim); margin-top:12px; font-family:var(--mono);">
+    Valori in vigore da aprile 2026 · CLA Malta Air 2026–2031 · Le stime non sostituiscono il cedolino ufficiale
+  </p>
+</section>
+
+<!-- CTA BOTTOM -->
+<div class="cta-section">
+  <h2>Pronto a volare<br>senza pensieri?</h2>
+  <p>Gratuita, sicura, aggiornata al CLA 2026–2031.</p>
+  <a href="https://apps.apple.com/it/app/flightmanager/id6765693187" class="btn-primary" style="display:inline-flex;">
+    <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    Scarica su App Store — Gratis
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p style="margin-bottom:8px;">
+    <strong style="color:var(--blue); font-family:var(--mono);">FLIGHTMANAGER</strong>
+  </p>
+  <p>App non ufficiale · Non affiliata con Malta Air o Ryanair Group</p>
+  <p style="margin-top:8px;">
+    Supporto: <a href="mailto:info@flight-manager.it">info@flight-manager.it</a>
+    &nbsp;·&nbsp;
+    <a href="/privacy.html">Privacy Policy</a>
+    &nbsp;·&nbsp;
+    © 2026 flight-manager.it
+  </p>
+</footer>
+
+</body>
+</html>
