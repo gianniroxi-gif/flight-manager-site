@@ -372,6 +372,62 @@
     .footer-links a:hover { color: var(--blue); }
     footer small { font-size: .78rem; color: var(--muted); }
 
+    /* ── PHONE CAROUSEL ── */
+    .phone { position: relative; aspect-ratio: 9/19.5; }
+    .phone-slide {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      opacity: 0; transition: opacity .9s ease; z-index: 1;
+    }
+    .phone-slide.active { opacity: 1; }
+
+    /* ── HERO SVG ROUTE ── */
+    .hero-route {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0;
+    }
+    .route-path {
+      opacity: 0;
+      animation: routeFadeIn 2s ease forwards .6s, routeFlow 12s linear 2.6s infinite;
+    }
+    .route-dot { opacity: 0; animation: routeFadeIn 2s ease forwards 1.2s; }
+    @keyframes routeFadeIn { to { opacity: 1; } }
+    @keyframes routeFlow { to { stroke-dashoffset: -104; } }
+
+    /* ── MADE BY ── */
+    .madeby { padding: 64px 0; border-top: 1px solid var(--border); }
+    .madeby-inner {
+      display: flex; align-items: center; gap: 24px;
+      max-width: 700px; margin: 0 auto;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--rl); padding: 32px 36px;
+    }
+    .madeby-icon {
+      width: 54px; height: 54px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--blue), var(--sky));
+      border-radius: 14px; display: flex; align-items: center;
+      justify-content: center; font-size: 1.5rem;
+      box-shadow: 0 8px 20px rgba(29,78,216,.25);
+    }
+    .madeby-title { font-size: 1rem; font-weight: 700; margin-bottom: 5px; color: var(--text); }
+    .madeby-sub { font-size: .9rem; color: var(--sub); line-height: 1.65; }
+    @media (max-width: 480px) {
+      .madeby-inner { flex-direction: column; text-align: center; }
+    }
+
+    /* ── UPDATE STRIP ── */
+    .update-strip {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 9px 0; font-size: .78rem; color: var(--muted); font-weight: 500;
+      border-top: 1px solid var(--border); background: var(--bg);
+    }
+    .upd-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #22C55E; box-shadow: 0 0 5px #22C55E; flex-shrink: 0;
+    }
+
     /* ── ANIMATIONS ── */
     .fu { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
     .fu.vis { opacity: 1; transform: translateY(0); }
@@ -423,6 +479,13 @@
 
 <!-- ── HERO ── -->
 <section class="hero">
+  <svg class="hero-route" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <path class="route-path"
+      d="M -30 430 C 120 370, 250 110, 440 195 S 780 400, 970 170 Q 1110 70, 1290 130"
+      stroke="rgba(255,255,255,0.16)" stroke-width="1.5" stroke-dasharray="10 6" fill="none"/>
+    <circle class="route-dot" cx="440" cy="195" r="3" fill="rgba(255,255,255,0.45)"/>
+    <circle class="route-dot" cx="970" cy="170" r="3" fill="rgba(255,255,255,0.45)" style="animation-delay:1.6s"/>
+  </svg>
   <div class="wrap">
     <div class="hero-grid">
       <div>
@@ -436,7 +499,7 @@
           <span data-t="hero.t3">In tasca.</span>
         </h1>
         <p class="hero-sub fu d2" data-t="hero.sub">
-          L'unica app che stima la tua busta paga Malta Air — automaticamente. Importa i voli dall'email, compila gli extra e ottieni il tuo netto stimato in pochi secondi.
+          Atterri a Catania alle 23:30. La tua busta paga è già pronta. FlightManager importa i voli dall'email e calcola il tuo netto — in automatico.
         </p>
         <div class="hero-cta fu d3">
           <a href="https://apps.apple.com/it/app/flightmanager/id6765693187" class="asbtn">
@@ -451,15 +514,10 @@
 
       <div class="hero-visual fu d2">
         <div class="phone-wrap">
-          <div class="phone">
-            <img src="screens/voli.png" alt="FlightManager"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="phone-ph" style="display:none">
-              <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.2">
-                <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-              </svg>
-              <span>Screenshot principale<br>qui</span>
-            </div>
+          <div class="phone" id="hero-phone">
+            <img class="phone-slide active" src="screens/voli.png" alt="Voli del mese">
+            <img class="phone-slide" src="screens/logbook.png" alt="Logbook EASA">
+            <img class="phone-slide" src="screens/busta.png" alt="Busta paga stimata">
           </div>
           <div class="phone-glow"></div>
 
@@ -642,6 +700,19 @@
   </div>
 </section>
 
+<!-- ── MADE BY ── -->
+<section class="madeby">
+  <div class="wrap">
+    <div class="madeby-inner fu">
+      <div class="madeby-icon">✈</div>
+      <div>
+        <p class="madeby-title">Fatto da un pilota Malta Air, per i piloti Malta Air.</p>
+        <p class="madeby-sub">Non è il prodotto di una startup. È un tool nato perché non esisteva niente di simile — e perché ogni mese si perdevano ore a fare i conti a mano.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── CTA ── -->
 <section class="cta-sec">
   <div class="wrap fu">
@@ -658,6 +729,12 @@
     </div>
   </div>
 </section>
+
+<!-- ── UPDATE STRIP ── -->
+<div class="update-strip">
+  <span class="upd-dot"></span>
+  Ultimo aggiornamento: v1.0.6 — import LogTen Pro · maggio 2026
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -679,7 +756,7 @@ const T = {
     "hero.t1":"Logbook EASA",
     "hero.t2":"e busta paga.",
     "hero.t3":"In tasca.",
-    "hero.sub":"L'unica app che stima la tua busta paga Malta Air — automaticamente. Importa i voli dall'email, compila gli extra e ottieni il tuo netto stimato in pochi secondi.",
+    "hero.sub":"Atterri a Catania alle 23:30. La tua busta paga è già pronta. FlightManager importa i voli dall'email e calcola il tuo netto — in automatico.",
     "as.dl":"Scarica su",
     "fb.easa":"FCL.050","fb.compliant":"Compliant","fb.netto":"Netto stimato",
     "tr.easa":"EASA FCL.050 compliant","tr.ma":"Malta Air · Ryanair","tr.priv":"Dati solo su iPhone",
@@ -708,7 +785,7 @@ const T = {
     "hero.t1":"EASA Logbook",
     "hero.t2":"& payslip.",
     "hero.t3":"In your pocket.",
-    "hero.sub":"The only app that estimates your Malta Air payslip — automatically. Import flights from email, fill in extras, get your estimated net salary in seconds.",
+    "hero.sub":"Land in Catania at 11:30 PM. Your payslip is already ready. FlightManager imports your flights from email and calculates your net salary — automatically.",
     "as.dl":"Download on the",
     "fb.easa":"FCL.050","fb.compliant":"Compliant","fb.netto":"Est. net salary",
     "tr.easa":"EASA FCL.050 compliant","tr.ma":"Malta Air · Ryanair","tr.priv":"Data stays on iPhone",
@@ -744,6 +821,18 @@ function applyLang(l) {
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
 }
 document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
+
+// Phone carousel
+(function() {
+  const slides = document.querySelectorAll('#hero-phone .phone-slide');
+  if (slides.length < 2) return;
+  let cur = 0;
+  setInterval(function() {
+    slides[cur].classList.remove('active');
+    cur = (cur + 1) % slides.length;
+    slides[cur].classList.add('active');
+  }, 3000);
+})();
 
 // Scroll fade-in
 const obs = new IntersectionObserver(entries => {
