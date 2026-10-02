@@ -3,12 +3,28 @@
 Sito di FlightManager. GitHub Pages, dominio su register.it, `www` fa 301
 sull'apex.
 
-## Non cancellare
+## Google Search Console
 
-**`google2f4e7498c241fbb1.html`** — e' il file con cui Google Search Console
-verifica che il sito e' tuo. Non contiene niente di utile da leggere e sembra
-spazzatura: se sparisce, Google toglie la verifica e si perde l'accesso ai dati
-di ricerca finche' non si rifa' tutto.
+Il sito e' verificato come **proprieta' Dominio**, con un record **TXT sul DNS
+di register.it**:
+
+    "google-site-verification=p5y_RguOyfUXdKlBng1SAvPgUU3ovd_vBH50IQPB3y8"
+
+**Quel record non si tocca.** Se sparisce da register.it, Google toglie la
+verifica e si perde l'accesso ai dati di ricerca. Sta accanto al TXT dell'SPF
+(`v=spf1 include:spf.webapps.net ~all`), che a sua volta non si tocca: e' quello
+delle email.
+
+Il 2 ottobre 2026 si e' provato prima col metodo a **file HTML**
+(`google2f4e7498c241fbb1.html`, ancora in questa cartella). Non ha mai
+funzionato: il file rispondeva 200 con il contenuto esatto, anche allo user
+agent di Google, senza redirect — e Search Console continuava a dire «impossibile
+trovare il file». Il DNS ha funzionato al primo colpo. Se un giorno servisse
+rifare la verifica, partire da li' e non perdere tempo col file.
+
+Quel file puo' restare o sparire, non verifica piu' niente.
+
+## Non cancellare
 
 **`CNAME`** — tiene il dominio. Senza, il sito torna su
 `gianniroxi-gif.github.io`.
