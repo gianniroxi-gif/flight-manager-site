@@ -19,6 +19,12 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://flight-manager.it/en/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://flight-manager.it/"/>
   </url>
+  <url>
+    <loc>https://flight-manager.it/guide/busta-paga-malta-air/</loc>
+    <lastmod>2026-10-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url><loc>https://flight-manager.it/privacy.html</loc><priority>0.2</priority></url>
   <url><loc>https://flight-manager.it/terms.html</loc><priority>0.2</priority></url>
 </urlset>

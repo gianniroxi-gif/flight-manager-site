@@ -1,0 +1,79 @@
+/* Impaginazione delle guide. Prende i colori e i caratteri da styles.css:
+   qui c'e' solo quello che serve a un testo lungo da leggere. */
+
+.guida { max-width: 760px; margin: 0 auto; padding: 0 22px 90px; }
+
+.guida-testata { padding: 58px 0 34px; border-bottom: 1px solid var(--line); margin-bottom: 44px; }
+.guida-testata .eyebrow { margin-bottom: 20px; }
+.guida-testata h1 {
+  font-family: var(--space); font-size: clamp(30px, 5.2vw, 46px); line-height: 1.08;
+  letter-spacing: -.02em; font-weight: 700; margin: 0 0 18px;
+}
+.guida-testata h1 em { font-style: normal; color: var(--cyan); }
+.guida-sommario { font-size: 18px; line-height: 1.6; color: var(--muted); margin: 0; }
+.guida-meta {
+  margin-top: 26px; font-family: var(--mono); font-size: 11px; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--dim);
+}
+
+.guida h2 {
+  font-family: var(--space); font-size: 25px; line-height: 1.2; font-weight: 600;
+  letter-spacing: -.01em; margin: 56px 0 18px; padding-top: 10px;
+}
+.guida h3 { font-family: var(--space); font-size: 18px; font-weight: 600; margin: 34px 0 12px; }
+.guida p  { font-size: 16.5px; line-height: 1.72; margin: 0 0 18px; color: #dceaef; }
+.guida p.nota { color: var(--muted); font-size: 15px; }
+.guida strong { color: var(--text); font-weight: 600; }
+.guida a { color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(70,215,232,.35); }
+.guida a:hover { border-bottom-color: var(--cyan); }
+.guida ul, .guida ol { margin: 0 0 20px; padding-left: 22px; }
+.guida li { font-size: 16.5px; line-height: 1.68; margin-bottom: 9px; color: #dceaef; }
+
+/* Il riquadro col conto: e' la parte che la gente viene a leggere. */
+.conto {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  padding: 20px 22px; margin: 26px 0 28px; overflow-x: auto;
+}
+.conto table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 13.5px; }
+.conto th {
+  text-align: left; font-weight: 500; font-size: 10.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--dim); padding: 0 0 12px; border-bottom: 1px solid var(--line);
+}
+.conto td { padding: 9px 0; border-bottom: 1px solid rgba(174,210,226,.07); color: #cfe2e8; }
+.conto td:last-child, .conto th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.conto tr:last-child td { border-bottom: none; }
+.conto tr.somma td { font-weight: 600; color: var(--text); border-top: 1px solid var(--line-strong); padding-top: 13px; }
+.conto .meno { color: var(--amber); }
+.conto .cap { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); margin: 0 0 14px; font-family: var(--mono); }
+
+/* La formula, isolata: e' il cuore della guida e va vista tutta insieme. */
+.formula {
+  background: var(--bg-deep); border: 1px solid var(--line-strong); border-radius: 14px;
+  padding: 22px 24px; margin: 26px 0 28px; overflow-x: auto;
+  font-family: var(--mono); font-size: 13.5px; line-height: 1.95; color: #cfe2e8;
+  white-space: pre;
+}
+.formula b { color: var(--cyan); font-weight: 500; }
+
+.avviso {
+  border-left: 2px solid var(--amber); background: rgba(239,176,108,.06);
+  padding: 16px 20px; margin: 26px 0; border-radius: 0 12px 12px 0;
+}
+.avviso p { margin: 0; font-size: 15.5px; color: #e4eef1; }
+.avviso p + p { margin-top: 12px; }
+
+.indice { background: var(--surface-2); border: 1px solid var(--line); border-radius: 14px; padding: 20px 24px; margin-bottom: 44px; }
+.indice p { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin: 0 0 12px; }
+.indice ol { margin: 0; padding-left: 20px; }
+.indice li { font-size: 15.5px; margin-bottom: 7px; }
+
+.chiusura {
+  margin-top: 60px; padding-top: 34px; border-top: 1px solid var(--line);
+}
+.chiusura h2 { margin-top: 0; }
+
+@media (max-width: 560px) {
+  .guida { padding: 0 18px 70px; }
+  .guida-testata { padding-top: 40px; }
+  .conto, .formula { padding: 16px 14px; font-size: 12.5px; }
+}
