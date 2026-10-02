@@ -2,7 +2,10 @@
   const root = document.documentElement;
   const toggle = document.querySelector('.lang-toggle');
   const translatable = [...document.querySelectorAll('[data-it][data-en]')];
-  let language = 'it';
+  // La lingua di partenza e' quella della PAGINA, non sempre l'italiano: da
+  // /en/ l'HTML servito e' gia' inglese. Prima era fissa a 'it' e il primo
+  // tocco del selettore su /en/ non cambiava niente.
+  let language = root.lang === 'en' ? 'en' : 'it';
 
   function updateToday() {
     const target = document.querySelector('[data-today]');
@@ -27,7 +30,16 @@
     }
   }
 
-  toggle?.addEventListener('click', () => applyLanguage(language === 'it' ? 'en' : 'it'));
+  // Il selettore porta all'ALTRO INDIRIZZO, non scambia il testo sul posto.
+  // Due ragioni: la scelta diventa un link condivisibile, e Google trova due
+  // pagine invece di una — che e' il motivo per cui /en/ esiste. Se la pagina
+  // di destinazione non ci fosse, si ripiega sullo scambio di prima.
+  toggle?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const dove = language === 'it' ? '/en/' : '/';
+    if (location.pathname !== dove) { location.href = dove; return; }
+    applyLanguage(language === 'it' ? 'en' : 'it');
+  });
   updateToday();
 
   const observer = new IntersectionObserver((entries) => {

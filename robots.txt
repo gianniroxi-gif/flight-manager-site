@@ -1,0 +1,5 @@
+# flight-manager.it
+User-agent: *
+Allow: /
+
+Sitemap: https://flight-manager.it/sitemap.xml
